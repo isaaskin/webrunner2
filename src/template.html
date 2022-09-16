@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Runner</title>
+    <link rel="stylesheet" href="template.css">
+</head>
+
+<body>
+    <div class="container">
+        <div id="header">
+            <div class="tab-button active header-item noselect" tab-id="html">HTML</div>
+            <div class="tab-button header-item noselect" tab-id="css">CSS</div>
+            <div class="tab-button header-item noselect" tab-id="js">JavaScript</div>
+            <div class="header-item noselect">
+                <input type="checkbox" id="auto-run" checked>
+                <label for="auto-run">Auto Run?</label>
+            </div>
+            <div id="bar-wrapper" class="header-item noselect">
+                <div id="bar">
+                    <div id="loading"></div>
+                </div>
+            </div>
+            <div id="run-button-wrapper" class="header-item noselect">
+                <div id="run-button" class="button noselect">Run</div>
+            </div>
+        </div>
+        <div class="col-wrapper">
+            <div class="col">
+                <div id="tabs">
+                    <div class="tab active" value="html">
+                        <div id="source-code-html"></div>
+                    </div>
+                    <div class="tab" value="css">
+                        <div id="source-code-css"></div>
+                    </div>
+                    <div class="tab" value="js">
+                        <div id="source-code-js"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div id="renderedArea">
+                    <iframe id="doc" frameborder="1"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
