@@ -1,0 +1,8 @@
+# VSCode
+.vscode
+
+# node_modules
+node_modules
+
+# dist/bundle.js folder
+dist/bundle.js

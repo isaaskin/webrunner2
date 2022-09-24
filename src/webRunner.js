@@ -1,167 +1,241 @@
+/* eslint-disable import/no-extraneous-dependencies */
+import { basicSetup, EditorView } from 'codemirror';
+
+import { EditorState, Compartment } from '@codemirror/state';
+
+import { html } from '@codemirror/lang-html';
+
+import { css } from '@codemirror/lang-css';
+
+import { javascript } from '@codemirror/lang-javascript';
+
 import _html from './template.html';
 
-const iframe = document.createElement("iframe");
-iframe.style.width = '100%';
-iframe.style.height = '300px';
+const defaultOptions = {
+  width: '100%',
+  height: '300px',
+  loadHTMLFromCache: true,
+  loadCSSFromCache: true,
+  loadJavaScriptFromCache: true,
+};
 
-iframe.srcdoc = _html;
+/* eslint-disable import/prefer-default-export */
+export function init(domElement, options = defaultOptions) {
+  const language = new Compartment();
+  const tabSize = new Compartment();
 
-document.getElementById('root').appendChild(iframe)
+  const iframe = document.createElement('iframe');
 
+  if ('width' in options) {
+    iframe.style.width = options.width;
+  } else {
+    iframe.style.width = defaultOptions.width;
+  }
 
-import { basicSetup, EditorView } from "codemirror";
-import { EditorState, Compartment, ViewUpdate } from "@codemirror/state";
-import { html } from "@codemirror/lang-html"
+  if ('height' in options) {
+    iframe.style.height = options.height;
+  } else {
+    iframe.style.height = defaultOptions.height;
+  }
 
+  // Remove the border around the iframe
+  iframe.style.border = 'none';
 
-let language = new Compartment;
-let tabSize = new Compartment;
+  // Inject template HTML
+  iframe.srcdoc = _html;
 
+  // Append iframe to the desired DOM
+  domElement.appendChild(iframe);
 
-iframe.onload = () => {
+  let htmlValue = '';
+  let cssValue = '';
+  let javaScriptValue = '';
+
+  if ('htmlValue' in options) {
+    htmlValue = options.htmlValue;
+  } else {
+    let { loadHTMLFromCache } = defaultOptions;
+    if ('loadHTMLFromCache' in options) {
+      loadHTMLFromCache = options.loadHTMLFromCache;
+    }
+    if (loadHTMLFromCache) {
+      htmlValue = localStorage.getItem('htmlCode');
+    }
+  }
+
+  if ('cssValue' in options) {
+    cssValue = options.cssValue;
+  } else {
+    let { loadCSSFromCache } = defaultOptions;
+    if ('loadCSSFromCache' in options) {
+      loadCSSFromCache = options.loadCSSFromCache;
+    }
+    if (loadCSSFromCache) {
+      cssValue = localStorage.getItem('cssCode');
+    }
+  }
+
+  if ('javaScriptValue' in options) {
+    javaScriptValue = options.javaScriptValue;
+  } else {
+    let { loadJavaScriptFromCache } = defaultOptions;
+    if ('loadJavaScriptFromCache' in options) {
+      loadJavaScriptFromCache = options.loadJavaScriptFromCache;
+    }
+    if (loadJavaScriptFromCache) {
+      javaScriptValue = localStorage.getItem('javaScriptCode');
+    }
+  }
+
+  iframe.onload = () => {
     const document = iframe.contentDocument;
 
-    let htmlValue = '';
+    const run = () => {
+      const doc = document.getElementById('doc');
 
-    let stateHTML = EditorState.create({
-        extensions: [
-            basicSetup,
-            language.of(html()),
-            tabSize.of(EditorState.tabSize.of(8)),
-            EditorView.updateListener.of(v => {
-                    if (v.docChanged) {
-                        // Document changed
-                        htmlValue = v.state.doc.toString();
-                        handleChange();
-                    }
-                }
-            )
-        ]
-    })
+      localStorage.setItem('htmlCode', htmlValue);
+      localStorage.setItem('cssCode', cssValue);
+      localStorage.setItem('javaScriptCode', javaScriptValue);
 
-    
-    
-    let viewHTML = new EditorView({
-        state: stateHTML,
-        parent: document.getElementById("source-code-html")
-    })
+      // Build-up the HTML DOC
+      const htmlDoc = `<!DOCTYPE html><head><title>CodeRunner</title><style>${cssValue}</style></head><body>${htmlValue}<script>${javaScriptValue}</script></body></html>`;
 
-
-    let isAutoRunEnabled = true;
-
-    const barWrapper = document.getElementById("bar-wrapper");
-    const loading = document.getElementById("loading");
-    const autoRun = document.getElementById("auto-run");
-    const runButtonWrapper = document.getElementById("run-button-wrapper");
-    const tabButtons = document.getElementsByClassName("tab-button");
-
-    runButtonWrapper.onclick = () => {
-        run();
-    }
-
-    autoRun.onchange = (event) => {
-        if (event.target.checked) {
-            isAutoRunEnabled = true;
-            runButtonWrapper.style.display = "none";
-            barWrapper.style.display = "flex";
-        }
-        else {
-            isAutoRunEnabled = false;
-            runButtonWrapper.style.display = "flex";
-            barWrapper.style.display = "none";
-        }
-    }
-
-    runButtonWrapper.style.display = "none";
-    barWrapper.style.display = "flex";
+      doc.setAttribute('srcdoc', htmlDoc);
+    };
 
     let timeout;
+    let isAutoRunEnabled = true;
+
+    const barWrapper = document.getElementById('bar-wrapper');
+    const loading = document.getElementById('loading');
+    const autoRun = document.getElementById('auto-run');
+    const runButtonWrapper = document.getElementById('run-button-wrapper');
+    const tabButtons = document.getElementsByClassName('tab-button');
 
     const handleChange = () => {
-        if (!isAutoRunEnabled) {
-            return;
-        }
-        if (timeout !== null) {
-            clearTimeout(timeout);
-        }
-        loading.classList.remove("animated-loading");
-        setTimeout(() => {
-            loading.classList.add("animated-loading");
-        }, 0)
-        timeout = setTimeout(() => {
-            run();
-        }, 500)
-    }
+      if (!isAutoRunEnabled) {
+        return;
+      }
+      if (timeout !== null) {
+        clearTimeout(timeout);
+      }
+      loading.classList.remove('animated-loading');
 
-    // viewHTML.on("change", handleChange);
-    // cmCSS.on("change", handleChange);
-    // cmJS.on("change", handleChange);
+      setTimeout(() => {
+        loading.classList.add('animated-loading');
+      }, 0);
 
-    const run = () => {
-        const doc = document.getElementById("doc");
+      timeout = setTimeout(() => {
+        run();
+      }, 500);
+    };
 
-        const cssCode = ''
-        // const htmlCode = cmHTML.getValue();
-        const jsCode = ''
-
-        localStorage.setItem("htmlCode", htmlValue);
-        // localStorage.setItem("cssCode", cssCode);
-        // localStorage.setItem("jssCode", jsCode);
-
-        // Build-up the HTML DOC
-        const htmlDoc = `<!DOCTYPE html><head> <title>CodeRunner</title> <style>${cssCode}</style></head><body> ${htmlValue}<script>${jsCode}</script></body></html>`
-
-        doc.setAttribute("srcdoc", htmlDoc);
-    }
-
-    [...tabButtons].forEach(tabButton => {
-        tabButton.onclick = (event) => {
-            event.target.classList.add("active");
-
-            const tabId = tabButton.getAttribute("tab-id");
-
-            [...tabButtons].filter(el => el.getAttribute("tab-id") !== tabId).forEach(el => {
-                el.classList.remove("active");
-            })
-
-            const tabs = document.getElementsByClassName("tab");
-
-            [...tabs].forEach(el => {
-                if (el.getAttribute("value") === tabId) {
-                    el.classList.add("active");
-                    cmHTML.refresh();
-                    cmCSS.refresh();
-                    cmJS.refresh();
-                }
-                else {
-                    el.classList.remove("active");
-                }
-            })
-        }
+    const stateHTML = EditorState.create({
+      doc: htmlValue,
+      extensions: [
+        basicSetup,
+        language.of(html()),
+        tabSize.of(EditorState.tabSize.of(8)),
+        EditorView.updateListener.of((v) => {
+          if (v.docChanged) {
+            // Document changed
+            htmlValue = v.state.doc.toString();
+            handleChange();
+          }
+        }),
+      ],
     });
 
-    const loadFromLocalStorage = () => {
-        // Initial load
-        const htmlCodeLoaded = localStorage.getItem("htmlCode");
-        const cssCodeLoaded = localStorage.getItem("cssCode");
-        const jsCodeLoaded = localStorage.getItem("jssCode");
+    const stateCSS = EditorState.create({
+      doc: cssValue,
+      extensions: [
+        basicSetup,
+        language.of(css()),
+        tabSize.of(EditorState.tabSize.of(8)),
+        EditorView.updateListener.of((v) => {
+          if (v.docChanged) {
+            // Document changed
+            cssValue = v.state.doc.toString();
+            handleChange();
+          }
+        }),
+      ],
+    });
 
-        stateHTML.update({changes: {from: 0, to: stateHTML.doc.length, insert: htmlCodeLoaded}})
+    const stateJs = EditorState.create({
+      doc: javaScriptValue,
+      extensions: [
+        basicSetup,
+        language.of(javascript()),
+        tabSize.of(EditorState.tabSize.of(8)),
+        EditorView.updateListener.of((v) => {
+          if (v.docChanged) {
+            // Document changed
+            javaScriptValue = v.state.doc.toString();
+            handleChange();
+          }
+        }),
+      ],
+    });
 
-        // if (htmlCodeLoaded !== null) {
-        //     cmHTML.setValue(htmlCodeLoaded);
-        // }
+    // eslint-disable-next-line no-unused-vars
+    const viewHTML = new EditorView({
+      state: stateHTML,
+      parent: document.getElementById('source-code-html'),
+    });
 
-        // if (cssCodeLoaded !== null) {
-        //     cmCSS.setValue(cssCodeLoaded);
-        // }
+    // eslint-disable-next-line no-unused-vars
+    const viewCSS = new EditorView({
+      state: stateCSS,
+      parent: document.getElementById('source-code-css'),
+    });
 
-        // if (jsCodeLoaded !== null) {
-        //     cmJS.setValue(jsCodeLoaded);
-        // }
-    }
+    // eslint-disable-next-line no-unused-vars
+    const viewJs = new EditorView({
+      state: stateJs,
+      parent: document.getElementById('source-code-javascript'),
+    });
 
-    loadFromLocalStorage();
+    runButtonWrapper.onclick = () => {
+      run();
+    };
 
+    autoRun.onchange = (event) => {
+      if (event.target.checked) {
+        isAutoRunEnabled = true;
+        runButtonWrapper.style.display = 'none';
+        barWrapper.style.display = 'flex';
+      } else {
+        isAutoRunEnabled = false;
+        runButtonWrapper.style.display = 'flex';
+        barWrapper.style.display = 'none';
+      }
+    };
+
+    runButtonWrapper.style.display = 'none';
+    barWrapper.style.display = 'flex';
+
+    [...tabButtons].forEach((tabButton) => {
+      const localTabButton = tabButton;
+      localTabButton.onclick = (event) => {
+        event.target.classList.add('active');
+
+        const tabId = tabButton.getAttribute('tab-id');
+
+        [...tabButtons].filter((el) => el.getAttribute('tab-id') !== tabId).forEach((el) => {
+          el.classList.remove('active');
+        });
+
+        const tabs = document.getElementsByClassName('tab');
+
+        [...tabs].forEach((el) => {
+          if (el.getAttribute('value') === tabId) {
+            el.classList.add('active');
+          } else {
+            el.classList.remove('active');
+          }
+        });
+      };
+    });
+  };
 }
-

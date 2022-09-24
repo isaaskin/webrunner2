@@ -1,16 +1,23 @@
 {
-  "name": "web-runner",
-  "version": "1.0.0",
-  "description": "",
+  "name": "webrunner2",
+  "version": "1.0.1",
+  "description": "An easily embeddable web runner",
   "scripts": {
-    "build": "webpack"
+    "build": "webpack",
+    "prepublishOnly": "webpack --mode=production"
   },
-  "author": "",
-  "license": "ISC",
+  "main": "dist/bundle.js",
+  "author": "Isa Askin",
+  "license": "MIT",
   "devDependencies": {
+    "@codemirror/lang-css": "^6.0.0",
     "@codemirror/lang-html": "^6.1.1",
+    "@codemirror/lang-javascript": "^6.1.0",
     "codemirror": "^6.0.1",
     "css-loader": "^6.7.1",
+    "eslint": "^8.24.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
     "html-loader": "^4.1.0",
     "posthtml-inline-assets": "^3.1.0",
     "posthtml-loader": "^2.0.1",
