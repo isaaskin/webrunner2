@@ -24,3 +24,4 @@
 </body>
 </html>
 
+<iframe srcdoc="<h2>asd</h2>"></iframe>
