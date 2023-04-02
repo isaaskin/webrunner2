@@ -1,4 +1,4 @@
-[![Build and deploy to Pages](https://github.com/isaaskin/webrunner2/actions/workflows/webpack.yml/badge.svg)](https://github.com/isaaskin/webrunner2/actions/workflows/webpack.yml)
+[![Build and deploy to Pages](https://github.com/isaaskin/webrunner2/actions/workflows/build_and_deploy.yml/badge.svg)](https://github.com/isaaskin/webrunner2/actions/workflows/build_and_deploy.yml)
 
 ## Webrunner2
 
