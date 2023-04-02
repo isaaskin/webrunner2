@@ -21,7 +21,7 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
-jobs:  
+jobs:
   build:
     environment:
       name: github-pages
@@ -45,6 +45,9 @@ jobs:
       run: |
         npm install
         npm run build
+  
+    - name: Setup Pages
+      uses: actions/configure-pages@v3
 
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v1
@@ -52,12 +55,6 @@ jobs:
         # Upload entire repository
         path: './dist'
 
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v2
