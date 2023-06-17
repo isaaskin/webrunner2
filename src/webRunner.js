@@ -103,6 +103,9 @@ export function init(domElement, options = defaultOptions) {
       doc.setAttribute('srcdoc', htmlDoc);
     };
 
+    // Initial run
+    run();
+
     let timeout;
     let isAutoRunEnabled = true;
 
