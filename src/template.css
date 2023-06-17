@@ -13,9 +13,24 @@ body {
     justify-content: space-between;
 }
 
+@media only screen and (min-width : 768px) {
+    .container>.col-wrapper>.col:nth-child(2) {
+        border-left: none;
+    }
+}
+
+@media only screen and (max-width : 767px) {
+    .container>.col-wrapper {
+        flex-direction: column;
+    }
+
+    .container>.col-wrapper>.col:nth-child(2) {
+        border-top: none;
+    }
+}
+
 .container>.col-wrapper>.col {
-    width: 49%;
-    
+    flex: 1;
     border: 5px solid #FFCA58;
 }
 
