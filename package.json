@@ -1,6 +1,6 @@
 {
   "name": "webrunner2",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "An easily embeddable web runner",
   "scripts": {
     "build": "webpack",
