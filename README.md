@@ -63,3 +63,13 @@ webrunner2.init(document.getElementById("container"), options)
 ## An example on CodePen
 
 [Click for example](https://codepen.io/isaaskin/pen/mdQPzNx)
+
+## Change Log
+
+### v1.1.1
+
+- Eloborated the README.md file
+
+### v1.1.0
+
+- Added responsivity
