@@ -1,3 +1,7 @@
+body, html {
+    height: 100%;
+}
+
 body {
     font-family: Arial, Helvetica, sans-serif;
     margin: 0;
@@ -10,27 +14,40 @@ body {
 
 .container>.col-wrapper {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
+    height: calc(100% - 40px);
+    width: 100%;
+}
+
+.container>.col-wrapper>.col {
+    box-sizing: border-box;
 }
 
 @media only screen and (min-width : 768px) {
-    .container>.col-wrapper>.col:nth-child(2) {
-        border-left: none;
+    .container>.col-wrapper>.col:nth-child(3) {
+        order: 2;
+    }
+
+    .col-wrapper>.col {
+        width: 33.3%;
+        height: 100%;
     }
 }
 
 @media only screen and (max-width : 767px) {
-    .container>.col-wrapper {
-        flex-direction: column;
+    .container>.col-wrapper>.col:nth-child(2) {
+        order: 3;
+        width: 100%;
     }
 
-    .container>.col-wrapper>.col:nth-child(2) {
-        border-top: none;
+    .col-wrapper>.col {
+        width: 50%;
+        height: 50%;
     }
 }
 
 .container>.col-wrapper>.col {
-    flex: 1;
     border: 5px solid #FFCA58;
 }
 
@@ -59,12 +76,12 @@ body {
     justify-content: center;
     align-items: center;
 
-    margin: 0px 10px;
+    margin: 0 10px;
     cursor: pointer;
 }
 
 #header>.header-item:nth-child(1) {
-    margin: 0px;
+    margin: 0;
 }
 
 #header>.tab-button {
@@ -92,7 +109,7 @@ body {
     position: absolute;
     background-color: #81FCED;
     height: 100%;
-    width: 0%;
+    width: 0;
 }
 
 .animated-loading {
@@ -101,12 +118,16 @@ body {
 
 @keyframes refill {
     from {
-        width: 0%;
+        width: 0;
     }
-
     to {
         width: 100%;
     }
+}
+
+#outputArea {
+    height: 100%;
+    overflow: scroll;
 }
 
 #renderedArea {
@@ -154,6 +175,5 @@ body {
     -ms-user-select: none;
     /* Internet Explorer/Edge */
     user-select: none;
-    /* Non-prefixed version, currently
-                                    supported by Chrome, Edge, Opera and Firefox */
+    /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 }

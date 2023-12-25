@@ -19,13 +19,12 @@ module.exports = {
               ident: 'posthtml',
               plugins: [
                 /* PostHTML Plugins */
-                require('posthtml-inline-assets')()
-              ]
-            }
-          }
-        ]
-      }
-
+                require('posthtml-inline-assets')(),
+              ],
+            },
+          },
+        ],
+      },
     ],
   },
 };
