@@ -6,3 +6,7 @@ node_modules
 
 # dist/bundle.js folder
 dist/bundle.js
+
+# Other IDEs
+.idea
+.DS_Store

@@ -13,7 +13,7 @@ import _html from './template.html';
 
 const defaultOptions = {
   width: '100%',
-  height: '300px',
+  height: '400px',
   loadHTMLFromCache: true,
   loadCSSFromCache: true,
   loadJavaScriptFromCache: true,
@@ -89,16 +89,51 @@ export function init(domElement, options = defaultOptions) {
 
   iframe.onload = () => {
     const document = iframe.contentDocument;
+    const doc = document.getElementById('doc');
+    const outputArea = document.getElementById('outputArea');
+
+    // Start event listener
+    window.addEventListener('message', (e) => {
+      const entry = document.createElement('div');
+      e.data.message.forEach((m, i) => {
+        if (typeof m === 'object') {
+          e.data.message[i] = JSON.stringify(m);
+        }
+      });
+      entry.innerHTML = e.data.message;
+
+      switch (e.data.type) {
+        case 'log':
+          entry.innerHTML = `Log > ${entry.innerHTML}`;
+          break;
+        case 'info':
+          entry.innerHTML = `Info > ${entry.innerHTML}`;
+          break;
+        case 'error':
+          entry.innerHTML = `Error > ${entry.innerHTML}`;
+          break;
+        case 'warn':
+          entry.innerHTML = `Warning > ${entry.innerHTML}`;
+          break;
+        default:
+          break;
+      }
+
+      outputArea.appendChild(entry);
+      outputArea.scrollTop = outputArea.scrollHeight;
+    });
 
     const run = () => {
-      const doc = document.getElementById('doc');
+      // Clean the outputArea
+      outputArea.innerHTML = '';
 
-      localStorage.setItem('htmlCode', htmlValue);
-      localStorage.setItem('cssCode', cssValue);
-      localStorage.setItem('javaScriptCode', javaScriptValue);
+      localStorage.setItem('htmlCode', htmlValue === null ? '' : htmlValue);
+      localStorage.setItem('cssCode', cssValue === null ? '' : cssValue);
+      localStorage.setItem('javaScriptCode', javaScriptValue === null ? '' : javaScriptValue);
 
       // Build-up the HTML DOC
-      const htmlDoc = `<!DOCTYPE html><head><title>CodeRunner</title><style>${cssValue}</style></head><body>${htmlValue}<script>${javaScriptValue}</script></body></html>`;
+      const consoleForwardingScript = 'window.console.log=(...e)=>{window.parent.parent.postMessage({type:"log",message:e})},window.console.info=(...e)=>{window.parent.parent.postMessage({type:"info",message:e})},window.console.warn=(...e)=>{window.parent.parent.postMessage({type:"warn",message:e})},window.console.error=(...e)=>{window.parent.parent.postMessage({type:"error",message:e})};';
+      const htmlDoc = `<!DOCTYPE html><head><title>CodeRunner</title><style>${cssValue}</style></head><body>${htmlValue}<script>${consoleForwardingScript}</script><script>${javaScriptValue}</script></body></html>`;
 
       doc.setAttribute('srcdoc', htmlDoc);
     };
