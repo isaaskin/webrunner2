@@ -66,6 +66,10 @@ webrunner2.init(document.getElementById("container"), options)
 
 ## Change Log
 
+### v1.2.0
+
+- Added console output support
+
 ### v1.1.1
 
 - Eloborated the README.md file
